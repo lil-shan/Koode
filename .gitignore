@@ -1,0 +1,8 @@
+db/
+static/audio/
+__pycache__/
+*.pyc
+kiosk-env/
+whisper-small/
+whisper-tiny/
+rag/__pycache__/

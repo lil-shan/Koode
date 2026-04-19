@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Koode Doctor</title>
+<style>
+  :root {
+    --black: #0a0a0a;
+    --white: #ffffff;
+    --gray-100: #f5f5f5;
+    --gray-200: #e8e8e8;
+    --gray-400: #9e9e9e;
+    --gray-600: #555555;
+    --radius: 10px;
+    --font: 'Segoe UI', system-ui, sans-serif;
+    --emergency: #cc0000;
+    --high: #cc5500;
+    --medium: #aa7700;
+    --low: #227722;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: var(--font); background: var(--gray-100); color: var(--black); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+  #header { background: var(--white); border-bottom: 1px solid var(--gray-200); padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+  #header h1 { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; }
+  #header h1 span { font-weight: 300; color: var(--gray-400); }
+  #clock { font-size: 13px; color: var(--gray-400); }
+  .refresh-btn { background: var(--white); border: 1px solid var(--gray-200); color: var(--black); padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 13px; font-family: var(--font); margin-left: 12px; }
+
+  #main { display: flex; flex: 1; overflow: hidden; }
+
+  /* Queue */
+  #queue { width: 280px; background: var(--white); border-right: 1px solid var(--gray-200); display: flex; flex-direction: column; flex-shrink: 0; }
+  #queue-header { padding: 14px 16px; border-bottom: 1px solid var(--gray-200); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--gray-400); font-weight: 600; }
+  #queue-list { overflow-y: auto; flex: 1; }
+  .patient-card { padding: 14px 16px; border-bottom: 1px solid var(--gray-200); cursor: pointer; transition: background 0.1s; }
+  .patient-card:hover { background: var(--gray-100); }
+  .patient-card.active { background: var(--black); }
+  .patient-card.active .card-token { color: var(--white); }
+  .patient-card.active .card-name { color: #aaa; }
+  .patient-card.active .card-status { background: #333; color: #ccc; }
+  .card-token { font-size: 17px; font-weight: 700; color: var(--black); letter-spacing: -0.3px; }
+  .card-name { font-size: 13px; color: var(--gray-600); margin-top: 2px; }
+  .card-status { display: inline-block; margin-top: 5px; font-size: 11px; padding: 2px 8px; border-radius: 10px; background: var(--gray-200); color: var(--gray-600); text-transform: capitalize; }
+
+  /* Detail */
+  #detail { flex: 1; overflow-y: auto; padding: 24px; }
+  #empty-state { height: 100%; display: flex; align-items: center; justify-content: center; color: var(--gray-400); font-size: 15px; }
+  #patient-detail { display: none; max-width: 900px; }
+
+  .detail-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+  .detail-title { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+  .detail-meta { font-size: 14px; color: var(--gray-400); margin-top: 4px; }
+  .btn-row { display: flex; gap: 8px; }
+  .btn { padding: 9px 18px; border-radius: var(--radius); font-size: 14px; cursor: pointer; font-family: var(--font); border: 1px solid var(--gray-200); background: var(--white); color: var(--black); transition: all 0.15s; }
+  .btn-primary { background: var(--black); color: var(--white); border-color: var(--black); }
+  .btn:hover { opacity: 0.8; }
+
+  .card { background: var(--white); border-radius: var(--radius); border: 1px solid var(--gray-200); padding: 18px; margin-bottom: 14px; }
+  .card-title { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--gray-400); font-weight: 600; margin-bottom: 12px; }
+
+  /* Urgency badges */
+  .urgency { display: inline-block; padding: 3px 10px; border-radius: 10px; font-size: 12px; font-weight: 600; }
+  .urgency-EMERGENCY { background: #ffe0e0; color: var(--emergency); }
+  .urgency-HIGH { background: #fff0e0; color: var(--high); }
+  .urgency-MEDIUM { background: #fffbe0; color: var(--medium); }
+  .urgency-LOW { background: #e0f0e0; color: var(--low); }
+
+  /* Report */
+  .report-paragraph { font-size: 15px; line-height: 1.8; color: var(--black); padding: 14px; background: var(--gray-100); border-radius: 8px; margin-bottom: 12px; }
+  .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .report-item label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray-400); display: block; margin-bottom: 3px; }
+  .report-item div { font-size: 14px; color: var(--black); }
+
+  /* Vitals */
+  .vitals-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .vital { display: flex; flex-direction: column; gap: 4px; }
+  .vital label { font-size: 11px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.5px; }
+  .vital input { border: 1px solid var(--gray-200); border-radius: 8px; padding: 8px 10px; font-size: 14px; font-family: var(--font); outline: none; transition: border-color 0.15s; }
+  .vital input:focus { border-color: var(--black); }
+
+  textarea { width: 100%; border: 1px solid var(--gray-200); border-radius: 8px; padding: 10px 12px; font-size: 14px; resize: vertical; min-height: 80px; font-family: var(--font); outline: none; }
+  textarea:focus { border-color: var(--black); }
+
+  /* Conversation */
+  .conv-msg { padding: 8px 12px; border-radius: 8px; margin-bottom: 6px; font-size: 13px; line-height: 1.5; max-width: 80%; }
+  .conv-bot { background: var(--gray-100); color: var(--black); }
+  .conv-user { background: var(--black); color: var(--white); margin-left: auto; }
+  #d-conversation { max-height: 280px; overflow-y: auto; }
+</style>
+</head>
+<body>
+<div id="header">
+  <h1>Koode <span>Doctor</span></h1>
+  <div style="display:flex;align-items:center">
+    <span id="clock"></span>
+    <button class="refresh-btn" onclick="loadQueue()">Refresh</button>
+  </div>
+</div>
+
+<div id="main">
+  <div id="queue">
+    <div id="queue-header">Queue</div>
+    <div id="queue-list"></div>
+  </div>
+
+  <div id="detail">
+    <div id="empty-state">Select a patient from the queue</div>
+    <div id="patient-detail">
+      <div class="detail-header">
+        <div>
+          <div class="detail-title" id="detail-title">Patient</div>
+          <div class="detail-meta" id="detail-meta"></div>
+        </div>
+        <div class="btn-row">
+          <button class="btn" onclick="markDone()">Mark Done</button>
+          <button class="btn btn-primary" onclick="saveNotes()">Save</button>
+        </div>
+      </div>
+
+      <!-- Clinical Report -->
+      <div class="card">
+        <div class="card-title">Clinical Summary <span id="report-status" style="font-size:11px;margin-left:8px;color:var(--gray-400)"></span></div>
+        <div id="d-summary" class="report-paragraph">Generating report...</div>
+        <div class="report-grid" id="d-report-grid"></div>
+      </div>
+
+      <!-- Full Report -->
+      <div class="card">
+        <div class="card-title">Full Clinical Report</div>
+        <div id="d-full-report" style="font-size:14px;line-height:1.8;color:var(--black);white-space:pre-wrap">Generating detailed report in background...</div>
+      </div>
+
+      <!-- Vitals -->
+      <div class="card">
+        <div class="card-title">Vitals</div>
+        <div class="vitals-grid">
+          <div class="vital"><label>Temperature (F)</label><input id="v-temp" placeholder="98.6"></div>
+          <div class="vital"><label>Blood Pressure</label><input id="v-bp" placeholder="120/80"></div>
+          <div class="vital"><label>Pulse (bpm)</label><input id="v-pulse" placeholder="72"></div>
+          <div class="vital"><label>SpO2 (%)</label><input id="v-spo2" placeholder="98"></div>
+          <div class="vital"><label>Weight (kg)</label><input id="v-weight" placeholder=""></div>
+          <div class="vital"><label>RR (/min)</label><input id="v-rr" placeholder="16"></div>
+        </div>
+      </div>
+
+      <!-- Prescription -->
+      <div class="card">
+        <div class="card-title">Prescription</div>
+        <textarea id="d-prescription" placeholder="Medicines, dosage, duration..."></textarea>
+      </div>
+
+      <!-- Lab Orders -->
+      <div class="card">
+        <div class="card-title">Investigation Orders</div>
+        <textarea id="d-lab" placeholder="CBC, blood sugar, urine, X-ray..."></textarea>
+      </div>
+
+      <!-- Conversation -->
+      <div class="card">
+        <div class="card-title">Intake Conversation</div>
+        <div id="d-conversation"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentToken = null;
+
+async function loadQueue() {
+  const res = await fetch('/api/queue');
+  const data = await res.json();
+  const list = document.getElementById('queue-list');
+  list.innerHTML = '';
+  data.forEach(p => {
+    const div = document.createElement('div');
+    div.className = `patient-card${currentToken===p.token?' active':''}`;
+    div.onclick = () => loadPatient(p.token);
+    const statusColors = { interviewing:'#fff3e0', processing:'#e8eaf6', ready:'#e8f5e9', with_doctor:'#f3e5f5', done:'#eeeeee' };
+    div.innerHTML = `
+      <div class="card-token">${p.token}</div>
+      <div class="card-name">${p.name||'Unknown'}${p.age?' · '+p.age:''}</div>
+      <div style="font-size:11px;color:var(--gray-400);margin-top:2px">${p.department||''}</div>
+      <span class="card-status">${p.status.replace('_',' ')}</span>
+    `;
+    list.appendChild(div);
+  });
+}
+
+async function loadPatient(token) {
+  currentToken = token;
+  document.getElementById('empty-state').style.display = 'none';
+  document.getElementById('patient-detail').style.display = 'block';
+  document.querySelectorAll('.patient-card').forEach(c => {
+    c.classList.toggle('active', c.querySelector('.card-token').textContent === token);
+  });
+
+  const res = await fetch(`/api/patient/${token}`);
+  const p = await res.json();
+
+  document.getElementById('detail-title').textContent = p.name || 'Unknown Patient';
+  document.getElementById('detail-meta').textContent = `${token} · ${p.age||'—'} · ${p.gender||'—'} · ${p.language?.toUpperCase()}`;
+
+  // Clinical report
+  const statusEl = document.getElementById('report-status');
+  const summaryEl = document.getElementById('d-summary');
+  const gridEl = document.getElementById('d-report-grid');
+  gridEl.innerHTML = '';
+
+  if (p.clinical_report) {
+    try {
+      const r = JSON.parse(p.clinical_report);
+      if (r.summary) {
+        summaryEl.textContent = r.summary;
+      } else {
+        summaryEl.textContent = `${r.complaint||'Not specified'} for ${r.duration||'unknown duration'}, severity ${r.severity||'—'}/10.`;
+      }
+      // Grid items
+      const fields = [
+        ['Chief Complaint', r.complaint],
+        ['Duration', r.duration],
+        ['Severity', r.severity ? r.severity+'/10' : '—'],
+        ['Department', r.department],
+        ['Urgency', r.urgency ? `<span class="urgency urgency-${r.urgency}">${r.urgency}</span>` : '—'],
+        ['Associated', Array.isArray(r.associated) ? r.associated.join(', ') : r.associated],
+        ['History', r.history],
+        ['Medications', r.medications],
+        ['Allergies', r.allergies],
+        ['Investigations', Array.isArray(r.investigations) ? r.investigations.join(', ') : r.investigations],
+      ];
+      fields.forEach(([label, value]) => {
+        if (!value) return;
+        const item = document.createElement('div');
+        item.className = 'report-item';
+        item.innerHTML = `<label>${label}</label><div>${value}</div>`;
+        gridEl.appendChild(item);
+      });
+      statusEl.textContent = '— ready';
+    } catch {
+      summaryEl.textContent = p.clinical_report;
+    }
+  } else {
+    summaryEl.textContent = p.status === 'interviewing' ? 'Interview in progress...' : 'No report yet.';
+    statusEl.textContent = '';
+  }
+
+  // Full report
+  document.getElementById('d-full-report').textContent = p.full_report || 'Generating detailed report...';
+
+  // Vitals
+  try {
+    const v = JSON.parse(p.vitals || '{}');
+    ['temp','bp','pulse','spo2','weight','rr'].forEach(k => {
+      document.getElementById('v-'+k).value = v[k] || '';
+    });
+  } catch {}
+
+  document.getElementById('d-prescription').value = p.prescription || '';
+  document.getElementById('d-lab').value = p.lab_orders || '';
+
+  // Conversation
+  const convEl = document.getElementById('d-conversation');
+  convEl.innerHTML = '';
+  try {
+    JSON.parse(p.conversation || '[]').forEach(m => {
+      const d = document.createElement('div');
+      d.className = `conv-msg conv-${m.role === 'assistant' ? 'bot' : 'user'}`;
+      d.textContent = m.content;
+      convEl.appendChild(d);
+    });
+    convEl.scrollTop = convEl.scrollHeight;
+  } catch {}
+}
+
+async function saveNotes() {
+  if (!currentToken) return;
+  const vitals = {};
+  ['temp','bp','pulse','spo2','weight','rr'].forEach(k => vitals[k] = document.getElementById('v-'+k).value);
+  await fetch(`/api/patient/${currentToken}/update`, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({
+      prescription: document.getElementById('d-prescription').value,
+      lab_orders: document.getElementById('d-lab').value,
+      status: 'with_doctor',
+      vitals
+    })
+  });
+  loadQueue();
+}
+
+async function markDone() {
+  if (!currentToken) return;
+  const vitals = {};
+  ['temp','bp','pulse','spo2','weight','rr'].forEach(k => vitals[k] = document.getElementById('v-'+k).value);
+  await fetch(`/api/patient/${currentToken}/update`, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({
+      prescription: document.getElementById('d-prescription').value,
+      lab_orders: document.getElementById('d-lab').value,
+      status: 'done',
+      vitals
+    })
+  });
+  currentToken = null;
+  document.getElementById('patient-detail').style.display = 'none';
+  document.getElementById('empty-state').style.display = 'flex';
+  loadQueue();
+}
+
+setInterval(() => document.getElementById('clock').textContent = new Date().toLocaleTimeString(), 1000);
+setInterval(loadQueue, 20000);
+loadQueue();
+</script>
+</body>
+</html>

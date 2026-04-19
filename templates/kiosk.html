@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Koode</title>
+<style>
+  :root {
+    --black: #0a0a0a;
+    --white: #ffffff;
+    --gray-100: #f5f5f5;
+    --gray-200: #e8e8e8;
+    --gray-400: #9e9e9e;
+    --gray-600: #555555;
+    --accent: #1a1a1a;
+    --radius: 12px;
+    --font: 'Segoe UI', system-ui, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: var(--font); background: var(--white); color: var(--black); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+  /* Header */
+  #header { padding: 16px 24px; border-bottom: 1px solid var(--gray-200); display: flex; justify-content: space-between; align-items: center; background: var(--white); flex-shrink: 0; }
+  #logo { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; color: var(--black); }
+  #logo span { font-weight: 300; color: var(--gray-400); }
+  #token-box { text-align: right; }
+  #token-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--gray-400); }
+  #token-num { font-size: 22px; font-weight: 700; color: var(--black); letter-spacing: -0.5px; }
+
+  /* Language bar */
+  #lang-bar { padding: 10px 24px; display: flex; gap: 8px; border-bottom: 1px solid var(--gray-200); background: var(--white); flex-shrink: 0; }
+  .lang-btn { padding: 6px 16px; border: 1px solid var(--gray-200); background: var(--white); color: var(--gray-600); border-radius: 20px; cursor: pointer; font-size: 13px; transition: all 0.15s; }
+  .lang-btn.active { background: var(--black); color: var(--white); border-color: var(--black); }
+
+  /* Chat */
+  #chat-area { flex: 1; overflow-y: auto; padding: 20px 24px; display: flex; flex-direction: column; gap: 14px; background: var(--white); }
+  .bubble { max-width: 75%; padding: 12px 16px; border-radius: var(--radius); font-size: 15px; line-height: 1.6; animation: fadeUp 0.2s ease; }
+  .bubble.bot { background: var(--gray-100); color: var(--black); align-self: flex-start; border-bottom-left-radius: 4px; }
+  .bubble.user { background: var(--black); color: var(--white); align-self: flex-end; border-bottom-right-radius: 4px; }
+  .bubble.system { background: var(--gray-200); color: var(--gray-600); align-self: center; font-size: 13px; padding: 6px 14px; }
+  .streaming { border-bottom: 2px solid var(--gray-400); }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* Typing indicator */
+  #typing { display: none; align-self: flex-start; padding: 12px 16px; background: var(--gray-100); border-radius: var(--radius); border-bottom-left-radius: 4px; }
+  .dot { display: inline-block; width: 6px; height: 6px; background: var(--gray-400); border-radius: 50%; margin: 0 2px; animation: bounce 1s infinite; }
+  .dot:nth-child(2) { animation-delay: 0.15s; }
+  .dot:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes bounce { 0%,60%,100% { transform: translateY(0); } 30% { transform: translateY(-6px); } }
+
+  /* Input area */
+  #input-area { padding: 14px 24px; border-top: 1px solid var(--gray-200); background: var(--white); flex-shrink: 0; display: flex; flex-direction: column; gap: 10px; }
+  #text-row { display: flex; gap: 10px; }
+  #msg-input { flex: 1; border: 1px solid var(--gray-200); background: var(--gray-100); color: var(--black); padding: 12px 16px; border-radius: var(--radius); font-size: 15px; outline: none; font-family: var(--font); transition: border-color 0.15s; }
+  #msg-input:focus { border-color: var(--black); }
+  #msg-input::placeholder { color: var(--gray-400); }
+  #send-btn { background: var(--black); color: var(--white); border: none; padding: 12px 20px; border-radius: var(--radius); font-size: 15px; cursor: pointer; font-family: var(--font); transition: opacity 0.15s; }
+  #send-btn:hover { opacity: 0.8; }
+  #mic-btn { width: 100%; padding: 13px; border: 1px solid var(--gray-200); background: var(--white); color: var(--black); border-radius: var(--radius); font-size: 14px; cursor: pointer; font-family: var(--font); transition: all 0.15s; letter-spacing: 0.3px; }
+  #mic-btn.recording { background: var(--black); color: var(--white); border-color: var(--black); }
+
+  /* Start screen */
+  #start-screen { position: fixed; inset: 0; background: var(--white); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 32px; z-index: 100; padding: 32px; }
+  #start-screen h2 { font-size: 32px; font-weight: 700; letter-spacing: -1px; color: var(--black); }
+  #start-screen h2 span { font-weight: 300; color: var(--gray-400); }
+  #start-screen p { color: var(--gray-400); font-size: 15px; text-align: center; }
+  .lang-options { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 280px; }
+  .start-lang { padding: 14px; border: 1px solid var(--gray-200); background: var(--white); color: var(--black); border-radius: var(--radius); font-size: 16px; cursor: pointer; font-family: var(--font); transition: all 0.15s; text-align: center; }
+  .start-lang:hover { background: var(--black); color: var(--white); border-color: var(--black); }
+
+  /* Complete screen */
+  #complete-screen { display: none; position: fixed; inset: 0; background: var(--white); flex-direction: column; align-items: center; justify-content: center; gap: 16px; z-index: 100; padding: 32px; }
+  #complete-token { font-size: 72px; font-weight: 700; letter-spacing: -3px; color: var(--black); }
+  #complete-screen p { color: var(--gray-400); text-align: center; font-size: 15px; max-width: 300px; }
+  #complete-screen .start-lang { margin-top: 16px; }
+</style>
+</head>
+<body>
+
+<div id="start-screen">
+  <div>
+    <h2>Koode</h2>
+  </div>
+  <p>Select your preferred language to begin</p>
+  <div class="lang-options">
+    <button class="start-lang" onclick="startSession('ml')">Malayalam</button>
+    <button class="start-lang" onclick="startSession('hi')">Hindi</button>
+    <button class="start-lang" onclick="startSession('en')">English</button>
+  </div>
+</div>
+
+<div id="complete-screen">
+  <p style="font-size:13px;text-transform:uppercase;letter-spacing:1px;color:var(--gray-400)">Your Token</p>
+  <div id="complete-token">K0000</div>
+  <div id="complete-dept" style="font-size:18px;font-weight:600;color:var(--black);text-align:center;max-width:320px;line-height:1.4;margin-top:8px"></div>
+  <div id="complete-msg" style="font-size:14px;color:var(--gray-400);text-align:center;max-width:320px;margin-top:8px"></div>
+  <button class="start-lang" onclick="resetKiosk()" style="margin-top:24px">New Patient</button>
+</div>
+
+<div id="header">
+  <div id="logo">Koode</div>
+  <div id="token-box">
+    <div id="token-label">Token</div>
+    <div id="token-num">—</div>
+  </div>
+</div>
+
+<div id="lang-bar">
+  <button class="lang-btn active" onclick="setLang('ml',this)">Malayalam</button>
+  <button class="lang-btn" onclick="setLang('hi',this)">Hindi</button>
+  <button class="lang-btn" onclick="setLang('en',this)">English</button>
+</div>
+
+<div id="chat-area">
+  <div id="typing"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+</div>
+
+<div id="input-area">
+  <div id="text-row">
+    <input id="msg-input" type="text" placeholder="Type your response..." onkeydown="if(event.key==='Enter')sendText()">
+    <button id="send-btn" onclick="sendText()">Send</button>
+  </div>
+  <button id="mic-btn" onclick="toggleMic()">Hold to Speak</button>
+</div>
+
+<script>
+let token = null, language = 'en', mediaRecorder = null, audioChunks = [], isRecording = false;
+
+function setLang(lang, btn) {
+  language = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  const placeholders = { ml: 'നിങ്ങളുടെ ഉത്തരം ടൈപ്പ് ചെയ്യൂ...', hi: 'अपना जवाब टाइप करें...', en: 'Type your response...' };
+  document.getElementById('msg-input').placeholder = placeholders[lang] || placeholders.en;
+}
+
+async function startSession(lang) {
+  setLang(lang, null);
+  document.getElementById('start-screen').style.display = 'none';
+  showTyping(true);
+  const res = await fetch('/api/start', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({language: lang}) });
+  const data = await res.json();
+  token = data.token;
+  document.getElementById('token-num').textContent = token;
+  showTyping(false);
+  addBubble(data.message, 'bot');
+}
+
+async function sendText() {
+  const input = document.getElementById('msg-input');
+  const text = input.value.trim();
+  if (!text || !token) return;
+  input.value = '';
+  addBubble(text, 'user');
+  await sendMessage(text);
+}
+
+async function sendMessage(text) {
+  showTyping(true);
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({token, message: text})
+    });
+    const data = await res.json();
+    showTyping(false);
+    if (data.message) addBubble(data.message, 'bot');
+    if (data.complete) showComplete(token, data.message);
+  } catch(e) {
+    showTyping(false);
+    addBubble('Connection error. Please try again.', 'system');
+  }
+}
+
+async function toggleMic() {
+  if (isRecording) { stopRecording(); return; }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({audio: true});
+    audioChunks = [];
+    mediaRecorder = new MediaRecorder(stream);
+    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+    mediaRecorder.onstop = async () => {
+      const blob = new Blob(audioChunks, {type: 'audio/webm'});
+      stream.getTracks().forEach(t => t.stop());
+      await transcribeAndSend(blob);
+    };
+    mediaRecorder.start();
+    isRecording = true;
+    const btn = document.getElementById('mic-btn');
+    btn.textContent = 'Recording — tap to stop';
+    btn.classList.add('recording');
+  } catch(e) {
+    addBubble('Microphone access denied. Please use text input.', 'system');
+  }
+}
+
+function stopRecording() {
+  if (mediaRecorder && isRecording) {
+    mediaRecorder.stop();
+    isRecording = false;
+    const btn = document.getElementById('mic-btn');
+    btn.textContent = 'Hold to Speak';
+    btn.classList.remove('recording');
+  }
+}
+
+async function transcribeAndSend(blob) {
+  addBubble('Transcribing...', 'system');
+  const formData = new FormData();
+  formData.append('audio', blob, 'recording.webm');
+  formData.append('language', language);
+  try {
+    const res = await fetch('/api/transcribe', {method:'POST', body: formData});
+    const data = await res.json();
+    document.querySelectorAll('.bubble.system').forEach(b => { if(b.textContent === 'Transcribing...') b.remove(); });
+    if (data.text && data.text.trim() && !data.text.startsWith('Error')) {
+      addBubble(data.text, 'user');
+      await sendMessage(data.text);
+    } else {
+      addBubble('Could not understand audio. Please try again or use text.', 'system');
+    }
+  } catch(e) {
+    addBubble('Transcription error.', 'system');
+  }
+}
+
+function addBubble(text, type) {
+  const area = document.getElementById('chat-area');
+  const typing = document.getElementById('typing');
+  const div = document.createElement('div');
+  div.className = `bubble ${type}`;
+  div.textContent = text;
+  area.insertBefore(div, typing);
+  area.scrollTop = area.scrollHeight;
+}
+
+function showTyping(show) {
+  document.getElementById('typing').style.display = show ? 'block' : 'none';
+  document.getElementById('chat-area').scrollTop = 99999;
+}
+
+function showComplete(tok, msg) {
+  document.getElementById('complete-token').textContent = tok;
+  // Parse department from message
+  if (msg) {
+    const lines = msg.split('. ');
+    if (lines.length > 1) {
+      document.getElementById('complete-dept').textContent = lines[1] || '';
+      document.getElementById('complete-msg').textContent = lines.slice(2).join('. ') || 'Please wait to be called.';
+    } else {
+      document.getElementById('complete-msg').textContent = msg;
+    }
+  }
+  document.getElementById('complete-screen').style.display = 'flex';
+}
+
+function resetKiosk() {
+  token = null;
+  document.getElementById('complete-screen').style.display = 'none';
+  document.getElementById('start-screen').style.display = 'flex';
+  document.querySelectorAll('.bubble').forEach(b => b.remove());
+  document.getElementById('token-num').textContent = '—';
+}
+</script>
+</body>
+</html>

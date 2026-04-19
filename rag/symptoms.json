@@ -1,0 +1,211 @@
+{
+  "fever": {
+    "keywords": ["fever", "പനി", "बुखार", "temperature", "താപം", "tap"],
+    "follow_up_questions": [
+      "How many days ago did the fever start?",
+      "Is the fever constant or does it come and go?",
+      "Have you measured the temperature? What was it?",
+      "Do you have chills or shivering with the fever?"
+    ],
+    "associated_to_check": ["headache", "rash", "joint_pain", "vomiting", "cough", "bleeding"],
+    "red_flags": [
+      "fever with rash — consider dengue or chikungunya",
+      "fever with bleeding from any site — emergency, possible dengue hemorrhagic",
+      "fever with neck stiffness — consider meningitis",
+      "fever with altered consciousness — emergency",
+      "fever above 104F with no sweating — emergency"
+    ],
+    "kerala_context": [
+      "During monsoon: high risk of leptospirosis — ask about wading in floodwater",
+      "Year round: dengue is endemic — always ask about rash and joint pain with fever",
+      "Chikungunya common — ask about severe joint pain",
+      "Typhoid common — ask about relative bradycardia, rose spots, constipation"
+    ],
+    "clinical_notes": "Always check for hemorrhagic fever signs in Kerala. Dengue NS1 antigen test recommended if fever >2 days with joint pain or rash."
+  },
+
+  "chest_pain": {
+    "keywords": ["chest pain", "നെഞ്ചുവേദന", "सीने में दर्द", "chest", "നെഞ്ച്", "heart"],
+    "follow_up_questions": [
+      "Where exactly is the pain — centre, left, or right of chest?",
+      "Does the pain spread to your arm, jaw, or back?",
+      "Is it a crushing, squeezing, or sharp pain?",
+      "Do you get breathless with the pain?"
+    ],
+    "associated_to_check": ["breathlessness", "sweating", "palpitations", "arm_pain", "jaw_pain"],
+    "red_flags": [
+      "crushing central chest pain radiating to left arm or jaw — possible MI, EMERGENCY",
+      "chest pain with breathlessness and sweating — possible cardiac event",
+      "chest pain with collapse or syncope — EMERGENCY",
+      "sudden tearing chest pain radiating to back — possible aortic dissection"
+    ],
+    "kerala_context": [
+      "High prevalence of CAD in Kerala due to diet and lifestyle",
+      "Young patients with chest pain — consider myocarditis",
+      "Ask about family history of heart disease — very relevant in Kerala population"
+    ],
+    "clinical_notes": "Any chest pain with radiation or associated symptoms needs urgent ECG. Do not delay."
+  },
+
+  "cough": {
+    "keywords": ["cough", "ചുമ", "खांसी", "cold", "ജലദോഷം"],
+    "follow_up_questions": [
+      "How long have you had the cough?",
+      "Are you bringing up any phlegm or sputum? What colour?",
+      "Is there any blood in the sputum?",
+      "Do you have fever along with the cough?"
+    ],
+    "associated_to_check": ["fever", "breathlessness", "weight_loss", "night_sweats", "blood_sputum"],
+    "red_flags": [
+      "cough with blood in sputum — rule out TB, lung cancer",
+      "cough with weight loss and night sweats — high suspicion TB",
+      "cough with severe breathlessness — possible pneumonia or COPD exacerbation",
+      "sudden onset cough with chest pain — consider pulmonary embolism"
+    ],
+    "kerala_context": [
+      "TB prevalence significant — always ask about night sweats and weight loss",
+      "High humidity increases fungal infections — ask about occupational exposure",
+      "Dust and pollution — ask about occupational history"
+    ],
+    "clinical_notes": "Cough >2 weeks with fever and weight loss — mandatory sputum AFB. Chest X-ray for all productive coughs."
+  },
+
+  "headache": {
+    "keywords": ["headache", "തലവേദന", "सिरदर्द", "head pain", "migraine", "മൈഗ്രെയ്ൻ"],
+    "follow_up_questions": [
+      "Where exactly is the headache — front, back, or one side?",
+      "Is it throbbing, pressure-like, or band-like?",
+      "Did it come on suddenly or gradually?",
+      "Do you have nausea or vomiting with the headache?"
+    ],
+    "associated_to_check": ["fever", "vomiting", "vision_changes", "neck_stiffness", "light_sensitivity"],
+    "red_flags": [
+      "thunderclap headache — worst headache of life, sudden onset — possible subarachnoid haemorrhage, EMERGENCY",
+      "headache with fever and neck stiffness — possible meningitis, EMERGENCY",
+      "headache with vision loss — possible raised ICP",
+      "headache after head injury — possible intracranial bleed",
+      "progressive worsening headache — rule out space-occupying lesion"
+    ],
+    "kerala_context": [
+      "Migraine very common — ask about triggers, aura, family history",
+      "Hypertension headache common — always check BP",
+      "Dengue headache — retro-orbital pain characteristic"
+    ],
+    "clinical_notes": "Any new severe headache needs CT head urgently. Chronic migraine needs proper workup before treatment."
+  },
+
+  "abdominal_pain": {
+    "keywords": ["stomach pain", "വയറുവേദന", "पेट दर्द", "abdomen", "vomiting", "ഛർദ്ദി", "diarrhea", "വയറിളക്കം"],
+    "follow_up_questions": [
+      "Where exactly is the pain — upper, lower, or all over the stomach?",
+      "Does the pain come in waves or is it constant?",
+      "Do you have vomiting or nausea?",
+      "Any changes in bowel habits — diarrhoea or constipation?"
+    ],
+    "associated_to_check": ["fever", "vomiting", "diarrhea", "appetite_loss", "urine_changes", "jaundice"],
+    "red_flags": [
+      "severe sudden abdominal pain with rigid abdomen — possible perforation, EMERGENCY",
+      "abdominal pain with jaundice — liver or biliary pathology",
+      "abdominal pain with blood in stool — GI bleeding",
+      "right lower quadrant pain with fever — possible appendicitis",
+      "abdominal pain with inability to pass stool or gas — possible obstruction"
+    ],
+    "kerala_context": [
+      "Hepatitis A and E common — ask about jaundice, pale stools, dark urine",
+      "Amoebic dysentery common — ask about bloody diarrhoea",
+      "Food poisoning outbreaks common — ask about others affected"
+    ],
+    "clinical_notes": "Acute abdomen needs surgical review. Always ask about last menstrual period in females of reproductive age."
+  },
+
+  "joint_pain": {
+    "keywords": ["joint pain", "സന്ധിവേദന", "जोड़ों में दर्द", "arthritis", "swelling", "നീർക്കെട്ട്"],
+    "follow_up_questions": [
+      "Which joints are affected?",
+      "Is there any swelling or redness over the joints?",
+      "Is the pain worse in the morning or evening?",
+      "Did the joint pain start with a fever?"
+    ],
+    "associated_to_check": ["fever", "rash", "morning_stiffness", "eye_redness", "skin_changes"],
+    "red_flags": [
+      "acute joint pain with fever and rash — dengue or chikungunya",
+      "single hot swollen joint with fever — septic arthritis, EMERGENCY",
+      "joint pain with chest pain and rash — possible SLE",
+      "joint pain after sore throat in child — possible rheumatic fever"
+    ],
+    "kerala_context": [
+      "Chikungunya endemic — severe migratory joint pain after fever",
+      "Rheumatoid arthritis common — morning stiffness >1 hour",
+      "Gout increasingly common — ask about diet, uric acid history"
+    ],
+    "clinical_notes": "Post-chikungunya arthritis can persist months. Always check for RF, ANA in chronic cases."
+  },
+
+  "breathlessness": {
+    "keywords": ["breathlessness", "ശ്വാസതടസ്സം", "सांस की तकलीफ", "difficulty breathing", "shortness of breath"],
+    "follow_up_questions": [
+      "Did the breathlessness come on suddenly or gradually?",
+      "Does it happen at rest or only on exertion?",
+      "Do you wake up at night feeling breathless?",
+      "Do you have any wheezing or whistling sound when you breathe?"
+    ],
+    "associated_to_check": ["chest_pain", "cough", "fever", "leg_swelling", "palpitations"],
+    "red_flags": [
+      "sudden severe breathlessness at rest — EMERGENCY",
+      "breathlessness with chest pain — possible cardiac or PE",
+      "breathlessness with stridor — possible airway obstruction",
+      "breathlessness with cyanosis — EMERGENCY"
+    ],
+    "kerala_context": [
+      "Asthma very common — ask about triggers, previous attacks, inhalers",
+      "High humidity worsens COPD — ask about smoking history",
+      "Heart failure increasingly common — ask about leg swelling"
+    ],
+    "clinical_notes": "SpO2 mandatory for all breathless patients. Peak flow for asthma."
+  },
+
+  "diabetes": {
+    "keywords": ["diabetes", "പ്രമേഹം", "मधुमेह", "sugar", "blood sugar", "insulin"],
+    "follow_up_questions": [
+      "How long have you had diabetes?",
+      "What medicines are you taking for diabetes?",
+      "When did you last check your blood sugar? What was the reading?",
+      "Do you have any numbness or tingling in your feet?"
+    ],
+    "associated_to_check": ["vision_changes", "foot_problems", "kidney_problems", "chest_pain"],
+    "red_flags": [
+      "diabetic with fever — infection spreads fast, high priority",
+      "diabetic with chest pain — silent MI common in diabetics",
+      "diabetic with foot wound — diabetic foot, urgent review",
+      "diabetic with altered consciousness — hypoglycemia or DKA"
+    ],
+    "kerala_context": [
+      "Kerala has highest diabetes prevalence in India",
+      "Many patients on traditional medicine alongside allopathy — always ask",
+      "Diabetic nephropathy very common — check for proteinuria"
+    ],
+    "clinical_notes": "Always check HbA1c, renal function, urine protein in diabetic patients. Foot examination mandatory."
+  },
+
+  "general": {
+    "keywords": [],
+    "follow_up_questions": [
+      "Can you tell me more about your main complaint?",
+      "How long have you been feeling this way?",
+      "Has anything made it better or worse?",
+      "Do you have any other symptoms along with this?"
+    ],
+    "associated_to_check": ["fever", "appetite", "weight_loss", "sleep", "energy"],
+    "red_flags": [
+      "unexplained weight loss — rule out malignancy",
+      "night sweats with any complaint — rule out TB, lymphoma",
+      "unexplained fatigue — thyroid, anaemia, diabetes workup needed"
+    ],
+    "kerala_context": [
+      "Always ask about ayurvedic or herbal medicines",
+      "Nutritional deficiencies common despite food availability",
+      "Mental health concerns often presented as physical symptoms"
+    ],
+    "clinical_notes": "Complete systemic review important for vague complaints."
+  }
+}
